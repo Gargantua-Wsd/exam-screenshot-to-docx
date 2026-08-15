@@ -1,16 +1,31 @@
 # Exam Screenshot to DOCX
 
-灏嗙粍鍗风綉绔欑殑璇曞嵎鎴浘鑷姩鍒囧垎涓洪鐩浘鐗囷紝骞剁敓鎴愪繚鐣欏師濮嬮鍥俱€佸叕寮忓拰鎺掔増鐨?Word 璇曞嵎锛屾敮鎸侀暱棰樿嚜鍔ㄦ坊鍔犵瓟棰橀〉銆?
-## Features
+一个专门为从事家教工作的大学生设计的试卷整理工具。它可以把组卷网站上的试卷截图自动切分为独立题目图片，并生成保留原始题图、公式和排版的 Word 试卷。
 
-- Preserve original question images, diagrams, formulas, and coordinate grids.
-- Split long mobile/web screenshots into question-sized image blocks.
-- Pack short questions efficiently on A4 pages.
-- Add a following answer page after long questions.
-- Generate boundary preview and processing report for manual review.
-- OCR is optional and never replaces the original image.
+## 适用场景
 
-See [screenshot-to-docx/SKILL.md](screenshot-to-docx/SKILL.md) for the skill workflow and [screenshot-to-docx/README.md](screenshot-to-docx/README.md) for local usage.
+当你在试题网站上选好题目、组好试卷，却需要付费才能导出文件时，可以先将组好的试卷截图保存下来，再使用本项目生成可打印的 Word 文档。
 
-This project processes screenshots supplied by the user. It does not bypass website login, payment, or access controls.
+本项目特别适合：
 
+- 从事一对一家教或小班辅导的大学生；
+- 需要根据学生情况临时整理试卷的家教老师；
+- 需要保留物理图、电路图、坐标图、实验装置图和公式的试题整理工作。
+
+## 主要功能
+
+- 保留题目原始图片、题图、公式、坐标图和电路图；
+- 将长网页截图或手机截图切分为独立题目图片；
+- 普通短题按照 A4 页面尽量连续排版；
+- 长题单独排版，并在题目后自动增加答题区域；
+- 生成题目边界预览图，方便检查是否切题准确；
+- 生成处理报告，记录题目数量、长题数量和答题页数量；
+- OCR 仅作为辅助判断，不会用识别文字替换原始题目图片。
+
+## 使用说明
+
+详细的 skill 工作流程请参阅 [screenshot-to-docx/SKILL.md](screenshot-to-docx/SKILL.md)，本地运行方法请参阅 [screenshot-to-docx/README.md](screenshot-to-docx/README.md)。
+
+## 版权与使用边界
+
+本项目只处理用户已经获得的试卷截图，不绕过网站登录、付费或访问控制。使用时请遵守相关网站的服务条款以及试题内容的版权规定。

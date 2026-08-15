@@ -163,6 +163,22 @@ def build_docx(question_files: list[Path], output: Path, answer_style: str) -> d
     return {"question_count": len(question_files), "long_questions": long_questions, "answer_page_count": len(long_questions)}
 
 
+def add_answer_page(doc: Document, style: str, number: int) -> None:
+    doc.add_page_break()
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = p.add_run(f"Question {number} - Answer Area")
+    run.bold = True
+    if style == "blank":
+        return
+    if style == "grid":
+        for _ in range(18):
+            doc.add_paragraph("鈻?" * 24)
+    else:
+        for _ in range(18):
+            doc.add_paragraph("________________________________________________________________")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Split exam screenshots and assemble a DOCX")
     parser.add_argument("--input", required=True, type=Path)

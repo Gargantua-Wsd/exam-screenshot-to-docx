@@ -95,13 +95,15 @@ def crop_questions(image: Image.Image, cuts: list[int], out: Path) -> list[Path]
     out.mkdir(parents=True, exist_ok=True)
     result = []
     for index, (top, bottom) in enumerate(zip(cuts, cuts[1:]), 1):
-        crop = image.crop((0, top, image.width, bottom))
-        bbox = ImageOps.grayscale(crop).point(lambda p: 0 if p < 235 else 255).getbbox()
-        if bbox:
-            left, upper, right, lower = bbox
-            pad_x = max(8, image.width // 80)
-            pad_y = max(8, image.width // 100)
-            crop = crop.crop((max(0, left - pad_x), max(0, upper - pad_y), min(crop.width, right + pad_x), min(crop.height, lower + pad_y)))
+        # Keep generous vertical context so question numbers and conditions do
+        # not disappear when the separator falls inside a website card. The
+        # final portion of a card is reserved for the site's post-question
+        # controls; remove only that conservative tail band.
+        top_pad = max(80, image.width // 12)
+        tail_pad = max(80, image.width // 14)
+        crop_top = max(0, top - top_pad)
+        crop_bottom = image.height if bottom == image.height else max(crop_top + 100, bottom - tail_pad)
+        crop = image.crop((0, crop_top, image.width, crop_bottom))
         crop = ImageEnhance.Contrast(crop).enhance(1.05).filter(ImageFilter.SHARPEN)
         filename = out / f"question_{index:03d}.png"
         crop.save(filename, optimize=True)
@@ -172,33 +174,13 @@ def build_docx(question_files: list[Path], output: Path, answer_style: str) -> d
 
 def add_answer_page(doc: Document, style: str, number: int) -> None:
     doc.add_page_break()
-    p = doc.add_paragraph()
-    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = p.add_run(f"Question {number} - Answer Area")
-    run.bold = True
-    if style == "blank":
-        return
-    if style == "grid":
-        for _ in range(18):
-            doc.add_paragraph("鈻?" * 24)
-    else:
-        for _ in range(18):
-            doc.add_paragraph("________________________________________________________________")
+    for _ in range(18):
+        doc.add_paragraph()
 
 
 def add_answer_area(doc: Document, style: str, number: int, lines: int) -> None:
-    p = doc.add_paragraph()
-    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = p.add_run(f"Question {number} - Answer Area")
-    run.bold = True
-    if style == "blank":
-        return
-    if style == "grid":
-        for _ in range(lines):
-            doc.add_paragraph("鈻?" * 24)
-    else:
-        for _ in range(lines):
-            doc.add_paragraph("________________________________________________________________")
+    for _ in range(lines):
+        doc.add_paragraph()
 
 
 def main() -> None:

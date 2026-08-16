@@ -146,6 +146,7 @@ def build_docx(question_files: list[Path], output: Path, answer_style: str) -> d
     section.right_margin = Mm(18)
     usable_mm = 297 - 36
     long_questions = []
+    answer_area_sizes = []
     for index, file in enumerate(question_files, 1):
         with Image.open(file) as image:
             ratio = image.height / max(1, image.width)
@@ -156,11 +157,17 @@ def build_docx(question_files: list[Path], output: Path, answer_style: str) -> d
         p = doc.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p.add_run().add_picture(str(file), width=Mm(174))
+        # Every question gets response space. Keep short-question space in the
+        # current flow when possible, but give long questions a fresh full page.
         if is_long:
             long_questions.append(index)
+            answer_area_sizes.append("full_page")
             add_answer_page(doc, answer_style, index)
+        else:
+            answer_area_sizes.append("half_page")
+            add_answer_area(doc, answer_style, index, lines=9)
     doc.save(output)
-    return {"question_count": len(question_files), "long_questions": long_questions, "answer_page_count": len(long_questions)}
+    return {"question_count": len(question_files), "long_questions": long_questions, "answer_area_count": len(answer_area_sizes), "answer_area_sizes": answer_area_sizes, "answer_page_count": len(long_questions)}
 
 
 def add_answer_page(doc: Document, style: str, number: int) -> None:
@@ -176,6 +183,21 @@ def add_answer_page(doc: Document, style: str, number: int) -> None:
             doc.add_paragraph("鈻?" * 24)
     else:
         for _ in range(18):
+            doc.add_paragraph("________________________________________________________________")
+
+
+def add_answer_area(doc: Document, style: str, number: int, lines: int) -> None:
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = p.add_run(f"Question {number} - Answer Area")
+    run.bold = True
+    if style == "blank":
+        return
+    if style == "grid":
+        for _ in range(lines):
+            doc.add_paragraph("鈻?" * 24)
+    else:
+        for _ in range(lines):
             doc.add_paragraph("________________________________________________________________")
 
 

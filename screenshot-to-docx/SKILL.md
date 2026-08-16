@@ -20,10 +20,13 @@ Use the bundled `scripts/assemble.py` for deterministic image splitting and Word
 - A4 portrait, 18 mm margins.
 - Leave the formal exam title blank unless the user provides one.
 - Keep difficulty stars already present in the source image; do not infer or invent stars from question order, image height, or OCR.
+- First split the source into one complete short screenshot per question, then insert those question images into DOCX.
+- Preserve the question number, stem, conditions, diagrams, options, and all sub-questions. Add a safety margin around each detected card boundary rather than trimming aggressively.
+- Remove only the website's post-question controls and labels such as analysis, similar questions, and favorite/collect actions. Never remove content from the question itself.
 - Every question must be followed by an answer area.
 - Allocate each answer area dynamically between half an A4 page and one full A4 page. Shorter questions normally receive about half a page; long calculation questions receive about one page.
 - If a question image spans pages, place its answer area after the final question page.
-- Answer areas default to a heading plus ruled lines; use `--answer-style blank` for a blank area or `--answer-style grid` for graph-style answering.
+- Answer areas are blank space only: do not draw ruled lines, headings, labels, or other marks. The `--answer-style` option is retained only for compatibility and must not add visible content.
 
 ## Review rules
 
